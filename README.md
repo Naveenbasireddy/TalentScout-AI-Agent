@@ -31,14 +31,13 @@ TalentScout AI Agent is a React + TypeScript application that helps hiring teams
 - React 18 + TypeScript
 - Vite
 - Tailwind CSS
-- Supabase client integration
+- Browser `localStorage` for lightweight persistence
 
 ## Project Structure
 
 - `src/agents` - parsing, matching, outreach logic
 - `src/components` - UI steps and panels
-- `src/lib` - CSV parsing, scoring, export, Supabase client
-- `supabase/migrations` - SQL migration scripts
+- `src/lib` - CSV parsing, scoring, export utilities
 - `docs` - architecture and demo docs
 - `samples` - sample CSV inputs
 
@@ -55,21 +54,13 @@ TalentScout AI Agent is a React + TypeScript application that helps hiring teams
 npm install
 ```
 
-### 2) Configure environment
-
-Copy `.env.example` to `.env` and add your Supabase values:
-
-```bash
-cp .env.example .env
-```
-
-### 3) Run app
+### 2) Run app
 
 ```bash
 npm run dev
 ```
 
-### 4) Build and typecheck
+### 3) Build and typecheck
 
 ```bash
 npm run typecheck
@@ -112,3 +103,14 @@ Detailed architecture + scoring documentation:
 
 If your repo is private, add collaborator access for `hackathon@deccan.ai`.
 If your repo is public, direct access is already available.
+
+## Deploy to GitHub + Vercel
+
+1. Push your repository to GitHub.
+2. In Vercel, click **Add New Project** and import this GitHub repo.
+3. Keep the default build settings:
+   - Framework Preset: `Vite`
+   - Build Command: `npm run build`
+   - Output Directory: `dist`
+4. Ensure **Environment Variables** is empty (this project does not need API keys or DB credentials).
+5. Deploy.

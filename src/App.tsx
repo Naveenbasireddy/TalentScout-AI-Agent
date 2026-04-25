@@ -12,11 +12,35 @@ import { parseJD } from './agents/jdParser';
 import { matchCandidates } from './agents/matchingAgent';
 import { generateOutreach, updateOutreachResponse } from './agents/outreachAgent';
 import { computeFinalResults } from './lib/scoring';
-import { supabase } from './lib/supabase';
 import { ArrowRight, RotateCcw, Loader2 } from 'lucide-react';
 import type { AppStep, Candidate, ParsedJD, MatchResult, OutreachResult, FinalResult } from './types';
 
 function App() {
+  const persistLatestJD = useCallback((jd: ParsedJD) => {
+    localStorage.setItem('talentscout.latestJD', JSON.stringify({
+      rawText: jd.rawText,
+      role: jd.role,
+      skills: jd.skills,
+      experience: jd.experience,
+      experienceYears: jd.experienceYears,
+      createdAt: new Date().toISOString(),
+    }));
+  }, []);
+
+  const persistLatestFinalResults = useCallback((finals: FinalResult[]) => {
+    localStorage.setItem('talentscout.latestFinalResults', JSON.stringify({
+      rows: finals.map(r => ({
+        matchScore: r.matchScore,
+        interestScore: r.interestScore,
+        finalScore: r.finalScore,
+        recommendedAction: r.recommendedAction,
+        rank: r.rank,
+        explanation: r.explanation,
+      })),
+      createdAt: new Date().toISOString(),
+    }));
+  }, []);
+
   const [step, setStep] = useState<AppStep>('input');
   const [jdText, setJdText] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -45,16 +69,8 @@ function App() {
     setParsedJD(parsed);
     setStep('parsed');
     setIsAnalyzing(false);
-    try {
-      await supabase.from('job_descriptions').insert({
-        raw_text: parsed.rawText,
-        role: parsed.role,
-        skills: parsed.skills,
-        experience: parsed.experience,
-        experience_years: parsed.experienceYears,
-      });
-    } catch { /* non-critical */ }
-  }, [jdText]);
+    persistLatestJD(parsed);
+  }, [jdText, persistLatestJD]);
 
   // Step 2: Proceed to candidate upload
   const handleProceedToCandidates = useCallback(() => {
@@ -103,28 +119,8 @@ function App() {
     }
     setStep('shortlist');
     setIsShortlist(false);
-    try {
-      const jdRes = await supabase
-        .from('job_descriptions')
-        .select('id')
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      const jdId = jdRes.data?.id;
-      if (jdId) {
-        const rows = finals.map(r => ({
-          jd_id: jdId,
-          match_score: r.matchScore,
-          interest_score: r.interestScore,
-          final_score: r.finalScore,
-          recommended_action: r.recommendedAction,
-          rank: r.rank,
-          explanation: r.explanation,
-        }));
-        await supabase.from('match_results').insert(rows);
-      }
-    } catch { /* non-critical */ }
-  }, [outreachResults]);
+    persistLatestFinalResults(finals);
+  }, [outreachResults, persistLatestFinalResults]);
 
   const handleResponseUpdate = useCallback((candidateId: string, responseStatus: OutreachResult['responseStatus']) => {
     if (!parsedJD) return;

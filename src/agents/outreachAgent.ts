@@ -44,7 +44,7 @@ export function getInterestFromResponse(responseStatus: OutreachResult['response
 } {
   if (responseStatus === 'interested') return { interestLevel: 'interested', interestScore: 100 };
   if (responseStatus === 'maybe') return { interestLevel: 'maybe', interestScore: 60 };
-  if (responseStatus === 'not_interested') return { interestLevel: 'not_interested', interestScore: 20 };
+  if (responseStatus === 'not_interested') return { interestLevel: 'not_interested', interestScore: 0 };
   return { interestLevel: 'maybe', interestScore: 40 };
 }
 

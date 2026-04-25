@@ -26,7 +26,7 @@ flowchart LR
     F --> G[Response Status Update]
     G --> H[Final Scoring Engine]
     H --> I[Shortlist UI + CSV Export]
-    H --> J[(Supabase)]
+    H --> J[(Browser localStorage)]
 ```
 
 ## Core Modules
@@ -65,7 +65,7 @@ flowchart LR
 - Interest score mapping from response:
   - Interested: 100
   - Maybe: 60
-  - Not interested: 20
+  - Not interested: 0
   - No response: 40
 
 ### 3) Final Ranking
