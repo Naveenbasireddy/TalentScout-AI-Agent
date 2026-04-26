@@ -8,8 +8,7 @@ TalentScout AI Agent is a React + TypeScript application that helps hiring teams
 
 ## Live Prototype
 
-- Deploy URL: _Add after deployment_ (example: Vercel/Netlify URL)
-- Local URL (development): `http://localhost:5173`
+- Deploy URL: https://talent-scout-ai-agent-6ggy.vercel.app/
 
 ## Features
 
